@@ -1,0 +1,18 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment secrets — NEVER commit this
+.env
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Egg info
+*.egg-info/
+dist/
+build/

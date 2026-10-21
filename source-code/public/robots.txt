@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Dev-only gallery screens; no reason to index them.
+Disallow: /components
+Disallow: /design-system

@@ -1,0 +1,5 @@
+# Netlify SPA fallback.
+# MindQuest uses createBrowserRouter, so /mindquest/level2 is a client-side route
+# with no matching file on disk. Without this rule a refresh or a shared deep link
+# returns the host's own 404 instead of the app.
+/*    /index.html   200
