@@ -24,4 +24,4 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     # The AI Buddy screen needs the mic; everything else is denied.
-    Permissions-Policy = "camera=(), geolocation=(), microphone=(self)"
+    Permissions-Policy = "camera=(self), geolocation=(), microphone=(self)"

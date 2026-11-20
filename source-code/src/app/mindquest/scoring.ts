@@ -1,5 +1,6 @@
 import type { MindQuestSession } from "./session";
 import { clamp, mean, rate } from "./telemetry";
+import { pooledStress } from "../emotion/affect";
 
 /**
  * Baseline-relative anxiety index.
@@ -13,12 +14,16 @@ import { clamp, mean, rate } from "./telemetry";
  * All weights and thresholds are set by hand and have not been fitted to
  * clinical data (GAD-7 or otherwise). This is a screening heuristic, and the
  * result screen says so.
+ *
+ * With optional camera sensing, a fifth component scores how much more stressed the player's
+ * facial expression looked in the timed games than in the untimed ones, again relative to their
+ * own baseline so that a naturally serious resting face isn't counted against them.
  */
 
 export type AnxietyBand = "low" | "moderate" | "high";
 
 export type ScoreComponent = {
-  key: "impulsivity" | "variability" | "degradation" | "attention";
+  key: "impulsivity" | "variability" | "degradation" | "attention" | "facial";
   label: string;
   points: number;
   max: number;
@@ -40,6 +45,12 @@ export type AnxietyIndex = {
 
 /** Used only if neither untimed game produced data (e.g. both skipped). */
 const DEFAULT_BASELINE_ERROR_RATE = 0.12;
+
+/** Face frames needed in each phase before facial affect counts (~7 s at 3 frames/s). */
+export const MIN_FACE_FRAMES = 20;
+export const FACIAL_MAX = 15;
+/** Behavioural maxima when facial affect is measured, so the total stays 100. */
+const WITH_FACE_MAX: Record<string, number> = { impulsivity: 26, variability: 21, degradation: 21, attention: 17 };
 
 export const bandFor = (score: number): AnxietyBand =>
   score <= 33 ? "low" : score >= 67 ? "high" : "moderate";
@@ -150,7 +161,36 @@ export function computeAnxietyIndex(s: MindQuestSession): AnxietyIndex {
       : "Slicing not completed.",
   };
 
-  const components = [impulsivity, variability, degradation, attention];
+  // ---- Facial stress under pressure (0–15, optional camera sensing) ----
+  const af = s.affect;
+  const calm = pooledStress([af.byGame.flashRecall, af.byGame.puzzle]);
+  const pressed = pooledStress([af.byGame.slicing, af.byGame.runner]);
+  const faceMeasured =
+    af.enabled && calm.faceFrames >= MIN_FACE_FRAMES && pressed.faceFrames >= MIN_FACE_FRAMES;
+  const facial: ScoreComponent = {
+    key: "facial",
+    label: "Facial stress under pressure",
+    max: FACIAL_MAX,
+    points: faceMeasured
+      ? clamp((pressed.meanStress - calm.meanStress - 0.03) / 0.3, 0, 1) * FACIAL_MAX
+      : 0,
+    measured: faceMeasured,
+    detail: faceMeasured
+      ? `Stressed-looking expressions averaged ${Math.round(calm.meanStress * 100)}% in the calm games and ${Math.round(
+          pressed.meanStress * 100
+        )}% under pressure.`
+      : "Your face wasn't visible to the camera long enough in both phases to measure.",
+  };
+
+  const behavioural = [impulsivity, variability, degradation, attention];
+  if (faceMeasured) {
+    for (const c of behavioural) {
+      c.points *= WITH_FACE_MAX[c.key] / c.max;
+      c.max = WITH_FACE_MAX[c.key];
+    }
+  }
+  // Camera off: exactly the four behavioural components, as before.
+  const components = af.enabled ? [...behavioural, facial] : behavioural;
   const score = clamp(Math.round(components.reduce((sum, c) => sum + c.points, 0)), 0, 100);
 
   return {

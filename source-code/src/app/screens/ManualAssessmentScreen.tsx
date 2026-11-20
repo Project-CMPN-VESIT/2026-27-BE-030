@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, ClipboardList } from "lucide-react";
+import { EmotionConsent } from "../emotion/EmotionConsent";
+import { clearQuestionnaireAffect } from "../emotion/questionnaireAffect";
 
 type Question = {
   id: string;
@@ -37,6 +39,8 @@ const questions: Question[] = [
 
 export function ManualAssessmentScreen() {
   const navigate = useNavigate();
+  // A new questionnaire must not show expressions recorded during an earlier one.
+  useEffect(() => clearQuestionnaireAffect(), []);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
 
@@ -114,6 +118,13 @@ export function ManualAssessmentScreen() {
             Answer based on the last 2 weeks. This is a screening tool, not a diagnosis.
           </p>
         </motion.div>
+
+        <div className="mt-4">
+          <EmotionConsent
+            tone="light"
+            purpose="while you answer and shows them on your report — they never change your PHQ-9 or GAD-7 scores"
+          />
+        </div>
 
         <div className="mt-5 h-2 bg-white rounded-full overflow-hidden">
           <motion.div

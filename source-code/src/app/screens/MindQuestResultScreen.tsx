@@ -17,6 +17,7 @@ import { StreakCounter } from "../components/design-system/StreakCounter";
 import { getMindQuestSession } from "../mindquest/session";
 import { computeAnxietyIndex, computeXp } from "../mindquest/scoring";
 import { QUEST_STEPS } from "../mindquest/quest";
+import { AffectBreakdown } from "../emotion/AffectBreakdown";
 
 export function MindQuestResultScreen() {
   const navigate = useNavigate();
@@ -397,6 +398,24 @@ export function MindQuestResultScreen() {
           data such as GAD-7.
         </p>
       </motion.div>
+
+      {session.affect.enabled && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.54 }}
+          className="bg-white rounded-3xl p-6 mb-6 shadow-lg"
+        >
+          <h3 className="text-lg font-semibold text-neutral-800 mb-1">Your expressions</h3>
+          <p className="text-sm text-neutral-600 mb-4">
+            What the camera saw in each game. The first two games are your calm baseline; the last
+            two are under time pressure.
+          </p>
+          <AffectBreakdown
+            rows={QUEST_STEPS.map((step) => ({ label: step.label, summary: session.affect.byGame[step.id] }))}
+          />
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

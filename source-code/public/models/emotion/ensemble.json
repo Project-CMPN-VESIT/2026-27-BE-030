@@ -1,0 +1,42 @@
+{
+ "emotions": [
+  "angry",
+  "disgust",
+  "fear",
+  "happy",
+  "sad",
+  "surprise",
+  "neutral"
+ ],
+ "states": {
+  "angry": "stressed",
+  "disgust": "stressed",
+  "fear": "stressed",
+  "happy": "relaxed",
+  "sad": "stressed",
+  "surprise": "surprised",
+  "neutral": "normal"
+ },
+ "inputSize": 48,
+ "detector": {
+  "file": "ultraface-slim-320.onnx",
+  "width": 320,
+  "height": 240,
+  "scoreThreshold": 0.7,
+  "cropScale": 1.04
+ },
+ "models": [
+  {
+   "name": "resnet18",
+   "file": "resnet18.onnx",
+   "weight": 0.5
+  },
+  {
+   "name": "vggish",
+   "file": "vggish.onnx",
+   "weight": 0.5
+  }
+ ],
+ "privateTestStateAccuracy": 0.8188910560044581,
+ "interim": false
+}

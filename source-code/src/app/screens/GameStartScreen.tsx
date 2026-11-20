@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Sparkles, Brain, Heart } from "lucide-react";
 import { useNavigate } from "react-router";
 import { QUEST_STEPS } from "../mindquest/quest";
+import { EmotionConsent } from "../emotion/EmotionConsent";
 
 // Untimed (baseline) games get cool dots, timed (pressure) games warm ones.
 const DOT = ["bg-teal-300", "bg-blue-300", "bg-amber-300", "bg-rose-300"];
@@ -154,6 +155,16 @@ export function GameStartScreen() {
                 </div>
               ))}
             </div>
+          </motion.div>
+
+          {/* Optional camera emotion sensing; adds a facial-stress component to the index */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="mb-6"
+          >
+            <EmotionConsent purpose="during the four games and adds how your expression changes under pressure to your score" />
           </motion.div>
 
           {/* Start Button */}

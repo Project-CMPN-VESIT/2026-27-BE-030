@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { AffectBreakdown } from "../emotion/AffectBreakdown";
+import { loadQuestionnaireAffect } from "../emotion/questionnaireAffect";
 import { motion } from "motion/react";
 import { useLocation, useNavigate } from "react-router";
 import { AlertTriangle, ArrowLeft, ClipboardCheck, ShieldCheck, Users } from "lucide-react";
@@ -38,6 +40,7 @@ const normalizeLabel = (value: string) =>
 export function ManualAssessmentResultScreen() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [affect] = useState(() => loadQuestionnaireAffect());
   // Optional, and only used for the comparison card — it never touches scoring.
   const [ageGroup, setAgeGroup] = useState<string | null>(null);
 
@@ -204,6 +207,17 @@ export function ManualAssessmentResultScreen() {
                 Open Emergency Support
               </button>
             </div>
+          </div>
+        )}
+
+        {affect && affect.frames > 0 && (
+          <div className="mt-5 bg-white rounded-3xl p-6 shadow-lg border border-neutral-100">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-1">Expressions during the questionnaire</h3>
+            <p className="text-sm text-neutral-600 mb-4">
+              Shown for reflection only. They do not change your PHQ-9 or GAD-7 scores, which use the
+              standard validated scoring.
+            </p>
+            <AffectBreakdown rows={[{ label: "While answering", summary: affect }]} />
           </div>
         )}
 

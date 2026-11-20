@@ -4,6 +4,8 @@
  * Slices are keyed by game, not by level number, so the quest order (see
  * quest.ts) can change without the stored data changing meaning.
  */
+import { emptyAffect, type AffectSummary } from "../emotion/affect";
+import type { QuestStepId } from "./quest";
 
 /** Flash Recall — working-memory span. Untimed; part of the personal baseline. */
 export type FlashRecallStats = {
@@ -83,6 +85,16 @@ export type RunnerStats = {
   completed: boolean;
 };
 
+/**
+ * Facial-expression summaries from optional camera sensing. Only aggregate numbers are kept;
+ * frames are analysed on the device and never stored.
+ */
+export type AffectData = {
+  /** True once any game was played with emotion sensing on. */
+  enabled: boolean;
+  byGame: Record<QuestStepId, AffectSummary>;
+};
+
 export type MindQuestSession = {
   startedAt: number;
   /** Set when the last game finishes; null while a run is in progress. */
@@ -91,6 +103,7 @@ export type MindQuestSession = {
   puzzle: PuzzleStats;
   slicing: SlicingStats;
   runner: RunnerStats;
+  affect: AffectData;
 };
 
 // v2: the quest was rebuilt around the puzzle / slicing / runner categories.
@@ -153,6 +166,10 @@ const defaultSession = (): MindQuestSession => ({
     durationMs: 0,
     completed: false,
   },
+  affect: {
+    enabled: false,
+    byGame: { flashRecall: emptyAffect(), puzzle: emptyAffect(), slicing: emptyAffect(), runner: emptyAffect() },
+  },
 });
 
 type SessionPatch = {
@@ -162,6 +179,7 @@ type SessionPatch = {
   puzzle?: Partial<PuzzleStats>;
   slicing?: Partial<SlicingStats>;
   runner?: Partial<RunnerStats>;
+  affect?: { enabled?: boolean; byGame?: Partial<Record<QuestStepId, AffectSummary>> };
 };
 
 function merge(base: MindQuestSession, patch: SessionPatch): MindQuestSession {
@@ -172,6 +190,10 @@ function merge(base: MindQuestSession, patch: SessionPatch): MindQuestSession {
     puzzle: { ...base.puzzle, ...(patch.puzzle ?? {}) },
     slicing: { ...base.slicing, ...(patch.slicing ?? {}) },
     runner: { ...base.runner, ...(patch.runner ?? {}) },
+    affect: {
+      enabled: patch.affect?.enabled ?? base.affect.enabled,
+      byGame: { ...base.affect.byGame, ...(patch.affect?.byGame ?? {}) },
+    },
   };
 }
 

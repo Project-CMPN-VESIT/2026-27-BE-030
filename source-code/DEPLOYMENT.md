@@ -212,6 +212,14 @@ the bare URL returns a 404. That is expected, not a broken deploy.
 A trailing slash on `VITE_BACKEND_URL` produces request URLs like
 `https://api.onrender.com//api/users`, which 404. Leave it off.
 
+### Camera emotion sensing
+
+Nothing to configure. `npm run build` first copies the onnxruntime-web WASM runtime from
+`node_modules` into `public/vendor/ort/` (the `prebuild` script), and the trained models are
+committed under `public/models/emotion/`. `vercel.json` allows the camera for this site only
+(`Permissions-Policy: camera=(self)`). Sensing is opt-in, runs entirely in the browser, and
+never uploads video. Training and evaluation live in `ml/emotion/` (see its README).
+
 ---
 
 ## 5. Google OAuth

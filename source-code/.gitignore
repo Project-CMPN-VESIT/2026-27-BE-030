@@ -10,3 +10,11 @@ dist/
 .idea/
 coverage/
 *.log
+
+# Emotion model training data and venv; ORT wasm is copied from node_modules at build time
+ml/emotion/data/
+ml/emotion/.venv/
+ml/emotion/runs/**/*.pt
+public/vendor/
+ml/emotion/runs/**/*.onnx
+ml/emotion/**/__pycache__/
