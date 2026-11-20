@@ -17,6 +17,10 @@ Live app: https://mind-quest-project.vercel.app
 | [`reports/sem-7/`](reports/sem-7/) | Capstone Project Report, Semester VII (black book) — PDF and DOCX |
 | [`logbook/sem-7/`](logbook/sem-7/) | Capstone Project Logbook, Semester VII — PDF and DOCX |
 | [`research-paper/`](research-paper/) | Research paper — PDF and DOCX |
+| [`research-paper/submission/`](research-paper/submission/) | Submission confirmation — E2A 2027 (6th International Conference on Emerging Electronics & Automation), Paper ID 383 |
+| [`research-paper/plagiarism-report/`](research-paper/plagiarism-report/) | Turnitin similarity report for the paper |
+| [`research-paper/ai-detection-report/`](research-paper/ai-detection-report/) | Turnitin AI-detection report for the paper |
+| [`presentations/`](presentations/) | Review presentation (PPT) |
 | [`video/`](video/) | Video presentation — 3-minute demo with voiceover |
 
 ## Running the project
